@@ -27,6 +27,7 @@ class Focaccia < Sinatra::Base
       name = key.match(/focaccia:victim_count:([a-zA-Z]+)/)[1]
       { name: name, count: redis.get(key).to_i }
     end
+    @leaderboard = @leaderboard.select{ |entry| entry[:count] != 0 }
     @leaderboard.sort! {|a,b| -1 * (a[:count] <=> b[:count]) }
     counts = @leaderboard.map {|entry| entry[:count] }
     @leaderboard.map! {|entry| { name: entry[:name], count: entry[:count], rank: counts.index(entry[:count]) + 1 }}
